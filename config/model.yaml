@@ -1,0 +1,4 @@
+url: "http://10.16.6.191:3000/v1"
+Qwen-API-key: "sk-mgzgXlYPgzBiBulID157B1A63cB34a118d9342575d187e4e"
+model: "qwen3_30B_A3B"
+dataPath: "./data"

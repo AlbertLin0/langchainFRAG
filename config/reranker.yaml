@@ -1,0 +1,10 @@
+url: 'http://10.16.6.191:7997/rerank'
+headers:
+  Authorization: "Bearer sk-7b8a2c88-8a6b-416d-8502-83298d40a5aa"
+  Content-Type: 'application/json'
+  Accept: 'application/json'
+data:
+  model: 'models/bge-reranker-large'
+  return_documents: true
+  raw_scores: true
+  top_n: 1
