@@ -25,3 +25,18 @@
 - MultiHiertt: Complex reasoning across hierarchical tables in annual reports.
 
 ## Requierment
+xxx
+## Chunks
+分块策略包含对langchain.text_splite的包装和一部分自定义算子实现。
+
+**Langchain-Length-based**: 该方法很直接、固定分块大小。
+
+优点:
+1. Straightforward implementation
+2. Consistent chunk sizes
+3. Easily adaptable to different model requirements
+
+类型:
+1. Token-based
+2. Character-based
+

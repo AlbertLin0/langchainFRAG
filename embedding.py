@@ -1,5 +1,8 @@
 import requests
 import logging
+"""
+    英语文本用 zh-embeddings ......
+"""
 
 logger = logging.getLogger(__name__)
 

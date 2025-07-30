@@ -10,7 +10,7 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 """
-    该文件用于预处理数据集
+    该文件用于预处理Query
     TODO: 2025-7-28
     Corpus的处理方式 表格·图片·关键词等等。
 """
