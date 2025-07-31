@@ -64,7 +64,6 @@ class langchain_length_based_splitter(BaseOperator):
     def execute(self, text: str):
         # !!!必须确保text是字符串类型、编码方式是UTF-8
         if self.is_tokenized:
-            # 如果已经是分词后的文本，直接返回
             text = super()._tokenize_text(text)
             print(text)
         return self.splitter.split_text(text)    
@@ -84,9 +83,25 @@ class langchain_structure_based_splitter(BaseOperator):
             text = super()._tokenize_text(text)
         return self.splitter.split_text(text)
 
+@register_operator("langchain-resursiveCharacterTextSplitter")
+class langchain_resursiveCharacterTextSplitter(BaseOperator):
+    def __init__(self, chunk_size=512, chunk_overlap=51, is_tokenized=False, **kwargs):
+        self.splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            **kwargs,
+        )
+        self.is_tokenized = is_tokenized
+    def execute(self, text: str):
+        if self.is_tokenized:
+            text = super()._tokenize_text(text)
+        return self.splitter.split_text(text)
+
 @register_operator("resursiveChararterTextSplitter")
 class RecursiveChararterTextSplitter(BaseOperator):
     pass
+
+
 
 if __name__ == "__main__":
     # 测试 langchain_length_based_splitter

@@ -8,6 +8,8 @@
   1. 构建查询模版，使用Qwen提取查询的关键词，作为内容补充。
   2. 结构化处理语料库内容，包括对表格的处理。TODO：获取图结构的Summery知识？
 
+- 语料分块策略
+
 - 关联Milvus数据库：
   1. 向量数据库的基本操作
   2. 检索、embedding方法、文本分割算法
@@ -40,3 +42,4 @@ xxx
 1. Token-based
 2. Character-based
 
+**langchain-resursiveCharacterTextSplitter**: 
