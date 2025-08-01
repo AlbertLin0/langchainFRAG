@@ -1,7 +1,6 @@
 import shutil 
 import os 
 import re 
-import dotenv
 import json
 import jsonlines
 import logging
@@ -95,6 +94,33 @@ def expand_queries(subset, dataset_path, llm:ChatOpenAI):
     if not save_path.is_file():
         save_jsonl(expanded_queries, save_path)
 
+def expand_query_stream(query, llm:ChatOpenAI, subset):
+    """
+    扩展单个查询
+    :param query: {
+        "_id": "query_id",
+        "title": "query_title",
+        "text": "query_text"
+    }
+    :param subset: 数据集子集名称
+    :param llm: LLM模型
+    :param subset: 提示模版类型
+    :return: 扩展后的查询
+    """
+    prompt_templete = load_prompt(subset)
+    prompt = f"{prompt_templete}{query['text']}"
+    
+    try:
+        new_query = llm.invoke(prompt).content
+        return {
+            "_id": query["_id"],
+            "title": query["title"],
+            "text": f"{new_query}\n\n{query['text']}",
+        }
+    except Exception as e:
+        logger.error(f"Error expanding query {query['_id']}: {e}")
+        return query
+
 def copy_corpus(subset, dataset_path):
     from_path = os.path.join(dataset_path, subset, 'corpus.jsonl')
     to_path = os.path.join(dataset_path, subset, 'corpus_prep.jsonl')
@@ -103,13 +129,6 @@ def copy_corpus(subset, dataset_path):
 def pre_retrieve(dataset_path, llm:ChatOpenAI):
     # load env, 需要使用模型预处理数据集
     # config 文件中与 env文件中有冲突，可以选择将重要信息从config文件中提取出来，放到.env文件中。
-    try:
-        dotenv.load_dotenv()
-    except Exception as e:
-        logger.error(f"Error loading .env file: {e}")
-    if not os.getenv("Qwen-API-KEY"):
-        raise ValueError("Qwen-API-KEY is not set in the environment variables.")
-
     # 针对不同的数据集有不一样的处理方法
     # 特别是针对Mluti-hop数据集
     # 表格处理

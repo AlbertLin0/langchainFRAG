@@ -43,3 +43,34 @@ xxx
 2. Character-based
 
 **langchain-resursiveCharacterTextSplitter**: 
+
+### markdown splitter 逻辑
+优先级：
+0. \n 会匹配到行间公式中的\n
+1. #级别 - 栈
+2. \$\$、```math - 行间公式
+3. \`\`\` \~\~\~  - 代码块
+
+```python
+import a
+```
+
+```yaml
+x: 12
+```
+$$
+\max x = { 2, y}
+$$
+##
+```math 
+x = y \\
+y = x
+kkkj
+```
+
+***
+asds
+---
+asdasd
+___
+asdasd

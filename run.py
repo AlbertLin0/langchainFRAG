@@ -5,23 +5,11 @@ This script is used to run the LangChain application with the specified configur
 import yaml
 import os
 import logging
+import rerank 
+import dotenv
 from langchain_openai import ChatOpenAI
 from pre_retrueval import pre_retrieve
-import rerank 
-
-def load_yaml_config(file_path: str):
-    """
-
-    """
-    if not os.path.exists(file_path):
-        raise FileNotFoundError(f"Config file not found: {file_path}")
-    
-    with open(file_path, "r", encoding="utf-8") as f:
-        try:
-            return yaml.safe_load(f)
-        except yaml.YAMLError as e:
-            raise yaml.YAMLError(f"Failed to parse YAML file {file_path}: {e}")
-
+from utils import load_yaml_config
 # 日志文件路径（可选）
 log_dir = "logs"
 os.makedirs(log_dir, exist_ok=True)
@@ -45,27 +33,38 @@ CONFIG_DIR = "config"
 config_files = {
     "model_config": os.path.join(CONFIG_DIR, "model.yaml"),
     "reranker_config": os.path.join(CONFIG_DIR, "reranker.yaml"),
-    "embedding_config": os.path.join(CONFIG_DIR, "embedding.yaml")
+    "embedding_config": os.path.join(CONFIG_DIR, "embedding.yaml"),
+    "milvus_config": os.path.join(CONFIG_DIR, "milvus.yaml")
 }
 
 # Load configurations
 model_config = load_yaml_config(config_files["model_config"])
 reranker_config = load_yaml_config(config_files["reranker_config"])
 embedding_config = load_yaml_config(config_files["embedding_config"])
+milvus_config = load_yaml_config(config_files["milvus_config"])
 
 # Initialize LLM model
 # TODO: 只有这一种调用方式吗？
+try:
+    dotenv.load_dotenv()
+except Exception as e:
+    logger.error(f"Error loading .env file: {e}")
+if not os.getenv("Qwen-API-KEY"):
+    raise ValueError("Qwen-API-KEY is not set in the environment variables.")
+# config or Env Value？
 llm = ChatOpenAI(
-    api_key=model_config['Qwen-API-key'],
-    base_url=model_config['url'],
-    model_name=model_config['model'],
+    api_key=os.getenv("Qwen-API-KEY", model_config['Qwen-API-key']),
+    base_url=os.getenv("Qwen-API-URL", model_config['url']),
+    model_name=os.getenv("Qwen-API-MODEL", model_config['model']),
 )
 
 # Run pre-retrieval process
-# 该方法固定了数据集。
+# 该方法指定了数据集。
+# v1 该方法只处理了查询扩展, expand_query_stream支持流式处理query
 pre_retrieve(dataset_path=model_config['dataPath'], llm=llm)
 
 # Run embeddings process
 # store embedding results in the milvus database
+
 
 
